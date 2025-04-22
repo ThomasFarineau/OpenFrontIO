@@ -1,0 +1,141 @@
+@use "./global" as *
+
+:host
+  display: block
+
+img.emoji
+  height: 1em
+  width: auto
+
+.leaderboard
+  font-size: 16px
+  // This is the default font size for the leaderboard -> update all em
+  position: fixed
+  top: $padding
+  left: $padding
+  z-index: $frontZIndex
+  background-color: $background
+  color: white
+  padding: $padding
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5)
+  border-radius: $padding
+  max-width: 500px
+  max-height: 30vh
+  width: 400px
+  backdrop-filter: blur(5px)
+  display: flex
+  flex-direction: column
+  gap: 0.5rem
+  overflow: hidden
+
+  &.hidden
+    display: none !important
+
+  h1
+    font-size: 1.25em
+    text-transform: uppercase
+    font-weight: normal
+    padding: 0
+    margin: 0
+    line-height: 1.25em
+
+  .actions
+    display: flex
+    gap: 0.25em
+
+    button
+      width: 100%
+      padding: 0.25em
+      background: $background
+      border: none
+      color: $color
+      cursor: pointer
+      border-radius: 0.25em
+
+  .table-content
+    overflow: auto
+
+    &::-webkit-scrollbar
+      width: 0.5em
+      height: 0.5em
+
+    &::-webkit-scrollbar-track
+      background: transparent
+
+    &::-webkit-scrollbar-thumb
+      background: rgba(255, 255, 255, 0.2)
+      border-radius: 0.25em
+
+      &:hover
+        background: rgba(255, 255, 255, 0.4)
+
+    table
+      width: 100%
+      border-collapse: collapse
+
+      .player-name
+        max-width: 10ch
+        overflow: hidden
+        text-overflow: ellipsis
+        white-space: nowrap
+
+      th,
+      td
+        padding: 0
+        text-align: center
+        border: none
+        color: $color
+
+      th
+        font-size: 1.125em
+
+      .focused
+        font-weight: bold
+        font-size: 1.2em
+
+      tbody
+        tr
+          cursor: pointer
+          transition: background-color 0.2s
+
+          td
+            &:nth-child(1)
+              border-radius: 0.25em 0 0 0.25em
+
+            &:nth-child(5)
+              border-radius: 0 0.25em 0.25em 0
+
+          &:hover
+            background: rgba(255, 255, 255, 0.1)
+
+
+.leaderboard-button
+  position: fixed
+  left: $padding
+  top: $padding
+  z-index: $frontZIndex
+  background-color: $background
+  color: $color
+  border: none
+  border-radius: $padding
+  padding: $padding
+  font-size: 1em
+  cursor: pointer
+  font-weight: normal
+  margin: 0
+  line-height: 1em
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5)
+
+  &.hidden
+    display: none !important
+
+
+@media (max-width: 1000px)
+  .leaderboard
+    top: 70px
+    left: 0
+
+
+  .leaderboard-button
+    left: 0
+    top: 52px

@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { LitElement, css, html, unsafeCSS } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { EventBus } from "../../../core/EventBus";
 import { GameView } from "../../../core/game/GameView";
@@ -6,11 +6,15 @@ import { ClientID } from "../../../core/Schemas";
 import { AttackRatioEvent } from "../../InputHandler";
 import { SendSetTargetTroopRatioEvent } from "../../Transport";
 import { renderNumber, renderTroops } from "../../Utils";
+import styles from "../styles/ControlPanel.sass";
 import { UIState } from "../UIState";
 import { Layer } from "./Layer";
 
 @customElement("control-panel")
 export class ControlPanel extends LitElement implements Layer {
+  static styles = css`
+    ${unsafeCSS(styles)}
+  `;
   public game: GameView;
   public clientID: ClientID;
   public eventBus: EventBus;
@@ -163,93 +167,47 @@ export class ControlPanel extends LitElement implements Layer {
 
   render() {
     return html`
-      <style>
-        input[type="range"] {
-          -webkit-appearance: none;
-          background: transparent;
-          outline: none;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          appearance: none;
-          width: 16px;
-          height: 16px;
-          background: white;
-          border-width: 2px;
-          border-style: solid;
-          border-radius: 50%;
-          cursor: pointer;
-        }
-        input[type="range"]::-moz-range-thumb {
-          width: 16px;
-          height: 16px;
-          background: white;
-          border-width: 2px;
-          border-style: solid;
-          border-radius: 50%;
-          cursor: pointer;
-        }
-        .targetTroopRatio::-webkit-slider-thumb {
-          border-color: rgb(59 130 246);
-        }
-        .targetTroopRatio::-moz-range-thumb {
-          border-color: rgb(59 130 246);
-        }
-        .attackRatio::-webkit-slider-thumb {
-          border-color: rgb(239 68 68);
-        }
-        .attackRatio::-moz-range-thumb {
-          border-color: rgb(239 68 68);
-        }
-      </style>
       <div
-        class="${this._isVisible
-          ? "w-full text-sm lg:text-m lg:w-72 bg-gray-800/70 p-2 pr-3 lg:p-4 shadow-lg lg:rounded-lg backdrop-blur"
-          : "hidden"}"
+        class="control-panel ${this._isVisible ? "" : "hidden"}"
         @contextmenu=${(e) => e.preventDefault()}
       >
-        <div class="hidden lg:block bg-black/30 text-white mb-4 p-2 rounded">
-          <div class="flex justify-between mb-1">
-            <span class="font-bold">Pop:</span>
-            <span translate="no"
-              >${renderTroops(this._population)} /
+        <div class="desktop-only">
+          <div class="justify-between">
+            <b>📈 Pop:</b>
+            <span translate="no">
+              ${renderTroops(this._population)} /
               ${renderTroops(this._maxPopulation)}
               <span
                 class="${this._popRateIsIncreasing
-                  ? "text-green-500"
-                  : "text-yellow-500"}"
+                  ? "isIncreasing"
+                  : "isNotIncreasing"}"
                 translate="no"
-                >(+${renderTroops(this.popRate)})</span
-              ></span
-            >
+              >
+                (+${renderTroops(this.popRate)})
+              </span>
+            </span>
           </div>
-          <div class="flex justify-between">
-            <span class="font-bold">Gold:</span>
-            <span translate="no"
-              >${renderNumber(this._gold)}
-              (+${renderNumber(this._goldPerSecond)})</span
-            >
+          <div class="justify-between">
+            <b>🪙 Gold:</b>
+            <span translate="no">
+              ${renderNumber(this._gold)}
+              (+${renderNumber(this._goldPerSecond)})
+            </span>
           </div>
         </div>
 
-        <div class="relative mb-4 lg:mb-4">
-          <label class="block text-white mb-1" translate="no"
-            >Troops: <span translate="no">${renderTroops(this._troops)}</span> |
-            Workers:
-            <span translate="no">${renderTroops(this._workers)}</span></label
-          >
-          <div class="relative h-8">
-            <!-- Background track -->
-            <div
-              class="absolute left-0 right-0 top-3 h-2 bg-white/20 rounded"
-            ></div>
-            <!-- Fill track -->
-            <div
-              class="absolute left-0 top-3 h-2 bg-blue-500/60 rounded transition-all duration-300"
-              style="width: ${this.currentTroopRatio * 100}%"
-            ></div>
-            <!-- Range input - exactly overlaying the visual elements -->
+        <div>
+          <label class="block" translate="no" for="troop-ratio">
+            Troops: <span translate="no">${renderTroops(this._troops)}</span> |
+            Workers: <span translate="no">${renderTroops(this._workers)}</span>
+          </label>
+
+          <div class="with-value">
             <input
+              id="troop-ratio"
+              class="targetTroopRatio fill-${Math.round(
+                this.targetTroopRatio * 100,
+              )}"
               type="range"
               min="1"
               max="100"
@@ -259,31 +217,21 @@ export class ControlPanel extends LitElement implements Layer {
                   parseInt((e.target as HTMLInputElement).value) / 100;
                 this.onTroopChange(this.targetTroopRatio);
               }}
-              class="absolute left-0 right-0 top-2 m-0 h-4 cursor-pointer targetTroopRatio"
             />
+            <span> ${(this.targetTroopRatio * 100).toFixed(0)}% </span>
           </div>
         </div>
 
-        <div class="relative mb-0 lg:mb-4">
-          <label class="block text-white mb-1" translate="no"
-            >Attack Ratio: ${(this.attackRatio * 100).toFixed(0)}%
-            (${renderTroops(
-              this.game?.myPlayer()?.troops() * this.attackRatio,
-            )})</label
-          >
-          <div class="relative h-8">
-            <!-- Background track -->
-            <div
-              class="absolute left-0 right-0 top-3 h-2 bg-white/20 rounded"
-            ></div>
-            <!-- Fill track -->
-            <div
-              class="absolute left-0 top-3 h-2 bg-red-500/60 rounded transition-all duration-300"
-              style="width: ${this.attackRatio * 100}%"
-            ></div>
-            <!-- Range input - exactly overlaying the visual elements -->
+        <div>
+          <label translate="no" for="attack-ratio">
+            Troops Ready:
+            ${renderTroops(this.game?.myPlayer()?.troops() * this.attackRatio)}
+          </label>
+
+          <div class="with-value">
             <input
               id="attack-ratio"
+              class="attackRatio fill-${Math.round(this.attackRatio * 100)}"
               type="range"
               min="1"
               max="100"
@@ -293,15 +241,11 @@ export class ControlPanel extends LitElement implements Layer {
                   parseInt((e.target as HTMLInputElement).value) / 100;
                 this.onAttackRatioChange(this.attackRatio);
               }}
-              class="absolute left-0 right-0 top-2 m-0 h-4 cursor-pointer attackRatio"
             />
+            <span> ${(this.attackRatio * 100).toFixed(0)}% </span>
           </div>
         </div>
       </div>
     `;
-  }
-
-  createRenderRoot() {
-    return this; // Disable shadow DOM to allow Tailwind styles
   }
 }

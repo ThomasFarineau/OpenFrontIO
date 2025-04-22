@@ -1,10 +1,11 @@
-import { LitElement, css, html } from "lit";
+import { LitElement, css, html, unsafeCSS } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { EventBus, GameEvent } from "../../../core/EventBus";
 import { GameView, PlayerView, UnitView } from "../../../core/game/GameView";
 import { ClientID } from "../../../core/Schemas";
 import { renderNumber } from "../../Utils";
+import styles from "../styles/Leaderboard.sass";
 import { Layer } from "./Layer";
 
 interface Entry {
@@ -27,6 +28,9 @@ export class GoToUnitEvent implements GameEvent {
 
 @customElement("leader-board")
 export class Leaderboard extends LitElement implements Layer {
+  static styles = css`
+    ${unsafeCSS(styles)}
+  `;
   public game: GameView;
   public clientID: ClientID;
   public eventBus: EventBus;
@@ -125,114 +129,10 @@ export class Leaderboard extends LitElement implements Layer {
   }
 
   renderLayer(context: CanvasRenderingContext2D) {}
+
   shouldTransform(): boolean {
     return false;
   }
-
-  static styles = css`
-    :host {
-      display: block;
-    }
-    img.emoji {
-      height: 1em;
-      width: auto;
-    }
-    .leaderboard {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      z-index: 9999;
-      background-color: rgb(31 41 55 / 0.7);
-      padding: 10px;
-      padding-top: 0px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-      border-radius: 10px;
-      max-width: 500px;
-      max-height: 30vh;
-      overflow-y: auto;
-      width: 400px;
-      backdrop-filter: blur(5px);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th,
-    td {
-      padding: 5px;
-      text-align: center;
-      border-bottom: 1px solid rgba(51, 51, 51, 0.2);
-      color: white;
-    }
-    th {
-      background-color: rgb(31 41 55 / 0.5);
-      color: white;
-    }
-    .myPlayer {
-      font-weight: bold;
-      font-size: 1.2em;
-    }
-    .otherPlayer {
-      font-size: 1em;
-    }
-    tr:nth-child(even) {
-      background-color: rgb(31 41 55 / 0.5);
-    }
-    tbody tr {
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    tbody tr:hover {
-      background-color: rgba(78, 78, 78, 0.8);
-    }
-    .hidden {
-      display: none !important;
-    }
-    .leaderboard-button {
-      position: fixed;
-      left: 10px;
-      top: 10px;
-      z-index: 9999;
-      background-color: rgb(31 41 55 / 0.7);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 5px 10px;
-      cursor: pointer;
-    }
-
-    .leaderboard-close-button {
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-    }
-
-    .leaderboard-top-five-button {
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-    }
-
-    .player-name {
-      max-width: 10ch;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    @media (max-width: 1000px) {
-      .leaderboard {
-        top: 70px;
-        left: 0px;
-      }
-
-      .leaderboard-button {
-        left: 0px;
-        top: 52px;
-      }
-    }
-  `;
 
   render() {
     return html`
@@ -248,48 +148,57 @@ export class Leaderboard extends LitElement implements Layer {
         class="leaderboard ${this._leaderboardHidden ? "hidden" : ""}"
         @contextmenu=${(e) => e.preventDefault()}
       >
-        <button
-          class="leaderboard-close-button"
-          @click=${() => this.hideLeaderboard()}
-        >
-          Hide
-        </button>
-        <button
-          class="leaderboard-top-five-button"
-          @click=${() => {
-            this.showTopFive = !this.showTopFive;
-            this.updateLeaderboard();
-          }}
-        >
-          ${this.showTopFive ? "Show All" : "Show Top 5"}
-        </button>
-        <table>
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Player</th>
-              <th>Owned</th>
-              <th>Gold</th>
-              <th>Troops</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${this.players.map(
-              (player) => html`
-                <tr
-                  class="${player.isMyPlayer ? "myPlayer" : "otherPlayer"}"
-                  @click=${() => this.handleRowClickPlayer(player.player)}
-                >
-                  <td>${player.position}</td>
-                  <td class="player-name">${unsafeHTML(player.name)}</td>
-                  <td>${player.score}</td>
-                  <td>${player.gold}</td>
-                  <td>${player.troops}</td>
-                </tr>
-              `,
-            )}
-          </tbody>
-        </table>
+        <h1>Leaderboard</h1>
+
+        <div class="table-content">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Owned</th>
+                <th>Gold</th>
+                <th>Troops</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${this.players.map(
+                ({
+                  isMyPlayer,
+                  position,
+                  name,
+                  score,
+                  gold,
+                  troops,
+                  player,
+                }) => html`
+                  <tr
+                    class="${isMyPlayer ? "focused" : ""}"
+                    @click=${() => this.handleRowClickPlayer(player)}
+                  >
+                    <td>${position}</td>
+                    <td class="player-name">${unsafeHTML(name)}</td>
+                    <td>${score}</td>
+                    <td>${gold}</td>
+                    <td>${troops}</td>
+                  </tr>
+                `,
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="actions">
+          <button @click=${() => this.hideLeaderboard()}>Hide</button>
+          <button
+            @click=${() => {
+              this.showTopFive = !this.showTopFive;
+              this.updateLeaderboard();
+            }}
+          >
+            ${this.showTopFive ? "Show All" : "Show Top 5"}
+          </button>
+        </div>
       </div>
     `;
   }
@@ -315,15 +224,8 @@ export class Leaderboard extends LitElement implements Layer {
 }
 
 function formatPercentage(value: number): string {
-  const perc = value * 100;
-  if (perc > 99.5) {
-    return "100%";
-  }
-  if (perc < 0.01) {
-    return "0%";
-  }
-  if (perc < 0.1) {
-    return perc.toPrecision(1) + "%";
-  }
-  return perc.toPrecision(2) + "%";
+  const percentage = value * 100;
+  if (percentage >= 99.5) return "100%";
+  if (percentage <= 0.01) return "0%";
+  return percentage.toPrecision(percentage < 0.1 ? 1 : 2) + "%";
 }

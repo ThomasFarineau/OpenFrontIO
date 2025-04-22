@@ -61,6 +61,28 @@ export default async (env, argv) => {
           ],
         },
         {
+          test: /\.sass$/i,
+          use: [
+            "raw-loader",
+            {
+              loader: "postcss-loader",
+              options: {
+                postcssOptions: {
+                  plugins: ["tailwindcss", "autoprefixer"],
+                },
+              },
+            },
+            {
+              loader: "sass-loader",
+              options: {
+                sassOptions: {
+                  indentedSyntax: true,
+                },
+              },
+            },
+          ],
+        },
+        {
           test: /\.(webp|png|jpe?g|gif)$/i,
           type: "asset/resource",
           generator: {
