@@ -10,11 +10,10 @@ import { BuildMenu } from "./layers/BuildMenu";
 import { ControlPanel } from "./layers/ControlPanel";
 import { EmojiTable } from "./layers/EmojiTable";
 import { EventsDisplay } from "./layers/EventsDisplay";
+import { InGameHeader } from "./layers/InGameHeader";
 import { Layer } from "./layers/Layer";
-import { Leaderboard } from "./layers/Leaderboard";
 import { MultiTabModal } from "./layers/MultiTabModal";
 import { NameLayer } from "./layers/NameLayer";
-import { OptionsMenu } from "./layers/OptionsMenu";
 import { PlayerInfoOverlay } from "./layers/PlayerInfoOverlay";
 import { PlayerPanel } from "./layers/PlayerPanel";
 import { RadialMenu } from "./layers/RadialMenu";
@@ -60,13 +59,13 @@ export function createRenderer(
   buildMenu.game = game;
   buildMenu.eventBus = eventBus;
 
-  const leaderboard = document.querySelector("leader-board") as Leaderboard;
-  if (!emojiTable || !(leaderboard instanceof Leaderboard)) {
-    consolex.error("EmojiTable element not found in the DOM");
+  const inGameHeader = document.querySelector("in-game-header") as InGameHeader;
+  if (!(inGameHeader instanceof InGameHeader)) {
+    consolex.error("InGameHeader element not found in the DOM");
   }
-  leaderboard.clientID = clientID;
-  leaderboard.eventBus = eventBus;
-  leaderboard.game = game;
+  inGameHeader.game = game;
+  inGameHeader.clientID = clientID;
+  inGameHeader.eventBus = eventBus;
 
   const controlPanel = document.querySelector("control-panel") as ControlPanel;
   if (!(controlPanel instanceof ControlPanel)) {
@@ -104,13 +103,6 @@ export function createRenderer(
   }
   winModel.eventBus = eventBus;
   winModel.game = game;
-
-  const optionsMenu = document.querySelector("options-menu") as OptionsMenu;
-  if (!(optionsMenu instanceof OptionsMenu)) {
-    console.error("options menu not found");
-  }
-  optionsMenu.eventBus = eventBus;
-  optionsMenu.game = game;
 
   const topBar = document.querySelector("top-bar") as TopBar;
   if (!(topBar instanceof TopBar)) {
@@ -155,14 +147,13 @@ export function createRenderer(
       playerPanel,
     ),
     new SpawnTimer(game, transformHandler),
-    leaderboard,
     controlPanel,
     playerInfo,
     winModel,
-    optionsMenu,
     topBar,
     playerPanel,
     multiTabModal,
+    inGameHeader,
   ];
 
   return new GameRenderer(

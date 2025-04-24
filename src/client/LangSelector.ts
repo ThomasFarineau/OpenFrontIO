@@ -164,7 +164,7 @@ export class LangSelector extends LitElement {
       "host-lobby-modal",
       "join-private-lobby-modal",
       "emoji-table",
-      "leader-board",
+      "in-game-header",
       "build-menu",
       "win-modal",
       "game-starting-modal",

@@ -1,3 +1,10 @@
+@use "sass:color"
+@use "sass:math"
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap')
+
+$topbar-height: 3em
+
+$robotoMono: 'Roboto Mono', monospace
 $background: rgba(31, 41, 55, 0.7)
 $color: white
 $frontZIndex: 9999
@@ -6,6 +13,165 @@ $padding: 0.5em
 $desktop-max-width: 1023px
 $tablet-max-width: 639px
 
+$track-color: $background
+$thumb-bg: white
+$track-height: 0.5em
+$thumb-size: $track-height * 2.5
+$thumb-border-width: 0.0625em
+
+$attackRatio: rgb(213, 47, 61)
+$targetTroopRatio: rgb(43, 104, 205)
+
+*
+  box-sizing: border-box
+
+=card
+  background-color: $background
+  color: $color
+  border: none
+  border-radius: $padding * 1.5
+  padding: $padding
+  margin: 0
+  font-size: 1em
+  backdrop-filter: blur(5px)
+  z-index: $frontZIndex
+
+=withShadow
+  box-shadow: 0 0 1em color.adjust($background, $lightness: -25%, $alpha: -0.25)
+
+=defaultTransition
+  transition: all 0.15s ease-in-out
+
+.inGameHeader
+  position: absolute
+  top: $padding
+  right: $padding
+  left: $padding
+  display: flex
+  flex-direction: row
+  align-items: flex-start
+  gap: $padding * 1.5
+
+  .spacer
+    flex: 1
+
+.hidden
+  //display: none !important
+
+.hidden2
+  display: none !important
+
+.leaderboard
+  +withShadow
+  +card
+  font-size: 16px
+  // This is the default font size for the leaderboard -> update all em
+
+  max-width: 500px
+  max-height: 30vh
+  width: 400px
+
+  display: flex
+  flex-direction: column
+  gap: 0.5rem
+  overflow: hidden
+
+  h1
+    font-size: 1.25em
+    text-transform: uppercase
+    font-weight: normal
+    padding: 0
+    margin: 0
+    line-height: 1.25em
+
+  .actions
+    display: flex
+    gap: 0.25em
+
+    button
+      +defaultTransition
+      width: 100%
+      padding: 0.25em
+      background: color.adjust($background, $lightness: -2.5%)
+      border: none
+      color: $color
+      cursor: pointer
+      border-radius: 0.25em
+
+      &:hover
+        background: color.adjust($background, $lightness: -5%)
+        color: $color
+
+  .table-content
+    overflow: auto
+
+    &::-webkit-scrollbar
+      width: 0.5em
+      height: 0.5em
+
+    &::-webkit-scrollbar-track
+      background: transparent
+
+    &::-webkit-scrollbar-thumb
+      background: rgba(255, 255, 255, 0.2)
+      border-radius: 0.25em
+
+      &:hover
+        background: rgba(255, 255, 255, 0.4)
+
+    table
+      width: 100%
+      border-collapse: collapse
+
+      .player-name
+        max-width: 10ch
+        overflow: hidden
+        text-overflow: ellipsis
+        white-space: nowrap
+
+      th,
+      td
+        padding: 0
+        text-align: center
+        border: none
+        color: $color
+
+      th
+        font-size: 1.125em
+
+      .focused
+        font-weight: bold
+        font-size: 1.2em
+
+      tbody
+        tr
+          cursor: pointer
+          transition: background-color 0.2s
+
+          td
+            &:nth-child(1)
+              border-radius: 0.25em 0 0 0.25em
+
+            &:nth-child(5)
+              border-radius: 0 0.25em 0.25em 0
+
+          &:hover
+            background: rgba(255, 255, 255, 0.1)
+
+
+.leaderboard-button
+  +withShadow
+  +card
+  +defaultTransition
+  height: $topbar-height
+  cursor: pointer
+  font-weight: normal
+  margin: 0
+  line-height: 1em
+
+  &:hover
+    background: color.adjust($background, $lightness: -2.5%)
+    color: $color
 
 .desktop-only
   @media (max-width: $desktop-max-width)
@@ -14,3 +180,202 @@ $tablet-max-width: 639px
 .tablet-only
   @media (max-width: $tablet-max-width)
     display: none !important
+
+$background_hover: color.adjust($background, $lightness: -1.25%)
+
+.options
+  +card
+  +withShadow
+  font-weight: 300
+  height: $topbar-height
+  display: flex
+  flex-direction: row
+  gap: $padding
+  padding: $padding * 0.5
+
+  li
+    +defaultTransition
+    list-style: none
+    margin: 0
+    display: flex
+    justify-content: center
+    align-items: center
+    background: $background_hover
+    aspect-ratio: 1 / 1
+    border-radius: $padding
+    cursor: pointer
+
+    &.timer
+      aspect-ratio: 2 / 1
+
+    &:hover
+      background: color.adjust($background_hover, $lightness: -2.5%)
+
+.dropdown-menu
+  +card
+  +withShadow
+  position: absolute
+
+
+.informative-bar
+  @include card
+  @include withShadow
+  display: flex
+  flex-direction: row
+  gap: $padding
+  font-family: $robotoMono
+  font-weight: 300
+  height: $topbar-height
+
+  $width: 6.5em
+
+  li
+    font-size: 0.85em
+    list-style: none
+    margin: 0
+    color: white
+    position: relative
+    border-right: 1px solid white
+    padding: math.div($padding, 2) $padding*2 math.div($padding, 2) math.div($padding, 2)
+    width: $width
+    display: flex
+    justify-content: space-between
+    align-items: center
+
+    .icon
+      width: 1.75em
+      aspect-ratio: 1 / 1
+      display: inline-flex
+      align-items: center
+      justify-content: center
+
+    &:first-child
+      width: $width * 2
+
+    &:last-child
+      border: none
+
+
+.control-panel
+  @include card
+  @include withShadow
+  position: fixed
+  bottom: $padding
+  left: $padding
+  z-index: $frontZIndex
+  display: flex
+  flex-direction: column
+  gap: 0.5rem
+  width: 20em
+  max-width: 400px
+  box-sizing: border-box
+
+
+  @media(max-width: $desktop-max-width)
+    position: relative
+    width: 100%
+    max-width: 100%
+    border-radius: 0
+    left: 0
+    bottom: 0
+    display: flex
+    flex-direction: row
+    gap: 2em
+    box-shadow: none
+    & > div
+      flex: 1
+
+  @media(max-width: $tablet-max-width)
+    flex-direction: column
+    gap: 0.5em
+
+  b
+    .icon
+      width: 1.25em
+      aspect-ratio: 1 / 1
+      display: inline-block
+      text-align: center
+
+
+  .isIncreasing
+    color: #3fda3f
+
+  .isNotIncreasing
+    color: orange
+
+  .justify-between
+    display: flex
+    justify-content: space-between
+    align-items: center
+
+  .with-value
+    display: flex
+    justify-content: space-between
+    align-items: center
+    gap: 0.5em
+
+    span
+      font-size: 0.9em
+      font-weight: normal
+
+  input[type="range"]
+    position: relative
+    -webkit-appearance: none
+    -moz-appearance: none
+    appearance: none
+    width: 100%
+    height: $track-height
+    background: $track-color
+    border: none
+    border-radius: calc($track-height / 2)
+    outline: none
+    margin: 0
+
+    &.attackRatio
+      &::before, &::after
+        background: $attackRatio
+
+    &.targetTroopRatio
+      &::before, &::after
+        background: $targetTroopRatio
+
+    @for $i from 0 through 100
+      &.fill-#{$i}
+        &::before
+          width: calc(#{$i} * 1%)
+
+        &::after
+          left: calc(#{$i} * 1% - #{calc($thumb-size / 2)})
+
+    &::before, &::after
+      content: ""
+      position: absolute
+      top: 50%
+      transform: translateY(-50%)
+
+    &::before
+      left: 0
+      height: calc($track-height + 1px)
+      border-radius: calc($track-height / 2)
+      pointer-events: none
+      z-index: 1
+
+    &::after
+      aspect-ratio: 1 / 2
+      height: $thumb-size
+      left: 0
+      z-index: 2
+      border-radius: 0.25em
+      cursor: grab
+
+    &::-webkit-slider-thumb
+      -webkit-appearance: none
+      appearance: none
+      aspect-ratio: 1 / 2
+      height: $thumb-size
+      cursor: grab
+
+    &::-webkit-slider-runnable-track
+      height: $track-height
+      background: $track-color
+      border-radius: calc($track-height / 2)

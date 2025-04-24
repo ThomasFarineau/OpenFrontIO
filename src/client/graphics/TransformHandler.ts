@@ -2,7 +2,7 @@ import { EventBus } from "../../core/EventBus";
 import { Cell } from "../../core/game/Game";
 import { GameView } from "../../core/game/GameView";
 import { CenterCameraEvent, DragEvent, ZoomEvent } from "../InputHandler";
-import { GoToPlayerEvent, GoToUnitEvent } from "./layers/Leaderboard";
+import { GoToPlayerEvent, GoToUnitEvent } from "./layers/InGameHeader";
 
 export class TransformHandler {
   public scale: number = 1.8;

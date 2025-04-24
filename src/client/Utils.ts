@@ -4,38 +4,46 @@ export function renderTroops(troops: number): string {
   return renderNumber(troops / 10);
 }
 
-export function renderNumber(num: number): string {
-  num = Math.max(num, 0);
-
-  if (num >= 10_000_000) {
-    const value = Math.floor(num / 100000) / 10;
-    return value.toFixed(1) + "M";
-  } else if (num >= 1_000_000) {
-    const value = Math.floor(num / 10000) / 100;
-    return value.toFixed(2) + "M";
-  } else if (num >= 100000) {
-    return Math.floor(num / 1000) + "K";
-  } else if (num >= 10000) {
-    const value = Math.floor(num / 100) / 10;
-    return value.toFixed(1) + "K";
-  } else if (num >= 1000) {
-    const value = Math.floor(num / 10) / 100;
-    return value.toFixed(2) + "K";
-  } else {
-    return Math.floor(num).toString();
+export function renderNumber(value: number): string {
+  let n = Math.max(0, value);
+  if (isNaN(value)) {
+    n = 0;
   }
+  if (n < 1_000) {
+    return Math.floor(n).toString();
+  }
+  if (n < 1_000_000) {
+    return `${(n / 1_000).toFixed(1).replace(/\.0$/, "")}K`;
+  }
+  return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`;
+}
+
+export function renderPercentage(value: number): string {
+  const percentage = value * 100;
+  if (percentage >= 99.5) return "100%";
+  if (percentage <= 0.01) return "0%";
+  return percentage.toPrecision(percentage < 0.1 ? 1 : 2) + "%";
+}
+
+export function secondsToHms(d: number): string {
+  if (d === 0) return "-";
+  const h = Math.floor(d / 3600);
+  const m = Math.floor((d % 3600) / 60);
+  const s = d % 60;
+  return `${h > 0 ? `${h}h` : ""}${m > 0 ? `${m}m` : ""}${s}s`;
 }
 
 export function createCanvas(): HTMLCanvasElement {
   const canvas = document.createElement("canvas");
 
-  // Set canvas style to fill the screen
-  canvas.style.position = "fixed";
-  canvas.style.left = "0";
-  canvas.style.top = "0";
-  canvas.style.width = "100%";
-  canvas.style.height = "100%";
-  canvas.style.touchAction = "none";
+  Object.assign(canvas.style, {
+    position: "fixed",
+    left: "0",
+    top: "0",
+    width: "100%",
+    height: "100%",
+    touchAction: "none",
+  });
 
   return canvas;
 }

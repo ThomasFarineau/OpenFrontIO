@@ -5,8 +5,8 @@ import { GameView } from "../../../core/game/GameView";
 import { ClientID } from "../../../core/Schemas";
 import { AttackRatioEvent } from "../../InputHandler";
 import { SendSetTargetTroopRatioEvent } from "../../Transport";
-import { renderNumber, renderTroops } from "../../Utils";
-import styles from "../styles/ControlPanel.sass";
+import { renderTroops } from "../../Utils";
+import styles from "../styles/global.sass";
 import { UIState } from "../UIState";
 import { Layer } from "./Layer";
 
@@ -173,7 +173,7 @@ export class ControlPanel extends LitElement implements Layer {
       >
         <div class="desktop-only">
           <div class="justify-between">
-            <b>📈 Pop:</b>
+            <b><span class="icon">📈</span> Pop:</b>
             <span translate="no">
               ${renderTroops(this._population)} /
               ${renderTroops(this._maxPopulation)}
@@ -185,13 +185,6 @@ export class ControlPanel extends LitElement implements Layer {
               >
                 (+${renderTroops(this.popRate)})
               </span>
-            </span>
-          </div>
-          <div class="justify-between">
-            <b>🪙 Gold:</b>
-            <span translate="no">
-              ${renderNumber(this._gold)}
-              (+${renderNumber(this._goldPerSecond)})
             </span>
           </div>
         </div>
