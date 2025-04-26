@@ -1,17 +1,21 @@
-import { LitElement, css, html, unsafeCSS } from "lit";
+import { css, html, unsafeCSS } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { EventBus } from "../../../core/EventBus";
 import { GameView } from "../../../core/game/GameView";
 import { ClientID } from "../../../core/Schemas";
+import { Layer } from "../../graphics/layers/Layer";
+import styles from "../../graphics/styles/global.sass";
+import { UIState } from "../../graphics/UIState";
 import { AttackRatioEvent } from "../../InputHandler";
 import { SendSetTargetTroopRatioEvent } from "../../Transport";
 import { renderTroops } from "../../Utils";
-import styles from "../styles/global.sass";
-import { UIState } from "../UIState";
-import { Layer } from "./Layer";
+import OverlayComponent from "./OverlayComponent";
+
+const DEFAULT_ATTACK_RATIO = 0.2;
+const DEFAULT_TARGET_TROOP_RATIO = 0.95;
 
 @customElement("control-panel")
-export class ControlPanel extends LitElement implements Layer {
+export class ControlPanel extends OverlayComponent implements Layer {
   static styles = css`
     ${unsafeCSS(styles)}
   `;
@@ -20,41 +24,14 @@ export class ControlPanel extends LitElement implements Layer {
   public eventBus: EventBus;
   public uiState: UIState;
 
-  @state()
-  private attackRatio: number = 0.2;
-
-  @state()
-  private targetTroopRatio = 0.95;
-
-  @state()
-  private currentTroopRatio = 0.95;
-
-  @state()
-  private _population: number;
-
-  @state()
-  private _maxPopulation: number;
-
-  @state()
-  private popRate: number;
-
-  @state()
-  private _troops: number;
-
-  @state()
-  private _workers: number;
-
-  @state()
-  private _isVisible = false;
-
-  @state()
-  private _manpower: number = 0;
-
-  @state()
-  private _gold: number;
-
-  @state()
-  private _goldPerSecond: number;
+  @state() private attackRatio: number = DEFAULT_ATTACK_RATIO;
+  @state() private targetTroopRatio = DEFAULT_TARGET_TROOP_RATIO;
+  @state() private population: number;
+  @state() private maxPopulation: number;
+  @state() private popRate: number;
+  @state() private troops: number;
+  @state() private worker: number;
+  @state() private manPower: number = 0;
 
   private _lastPopulationIncreaseRate: number;
 
@@ -64,14 +41,15 @@ export class ControlPanel extends LitElement implements Layer {
 
   init() {
     this.attackRatio = Number(
-      localStorage.getItem("settings.attackRatio") ?? "0.2",
+      localStorage.getItem("settings.attackRatio") ??
+        String(DEFAULT_ATTACK_RATIO),
     );
     this.targetTroopRatio = Number(
-      localStorage.getItem("settings.troopRatio") ?? "0.95",
+      localStorage.getItem("settings.troopRatio") ??
+        String(DEFAULT_TARGET_TROOP_RATIO),
     );
     this.init_ = true;
     this.uiState.attackRatio = this.attackRatio;
-    this.currentTroopRatio = this.targetTroopRatio;
     this.eventBus.on(AttackRatioEvent, (event) => {
       let newAttackRatio =
         (parseInt(
@@ -89,7 +67,6 @@ export class ControlPanel extends LitElement implements Layer {
       }
 
       if (newAttackRatio == 0.11 && this.attackRatio == 0.01) {
-        // If we're changing the ratio from 1%, then set it to 10% instead of 11% to keep a consistency
         newAttackRatio = 0.1;
       }
 
@@ -106,32 +83,29 @@ export class ControlPanel extends LitElement implements Layer {
       this.init_ = false;
     }
 
-    if (!this._isVisible && !this.game.inSpawnPhase()) {
-      this.setVisibile(true);
+    if (!this.isVisible && !this.game.inSpawnPhase()) {
+      this.show();
     }
 
     const player = this.game.myPlayer();
     if (player == null || !player.isAlive()) {
-      this.setVisibile(false);
+      this.hide();
       return;
     }
 
-    const popIncreaseRate = player.population() - this._population;
+    const popIncreaseRate = player.population() - this.population;
     if (this.game.ticks() % 5 == 0) {
       this._popRateIsIncreasing =
         popIncreaseRate >= this._lastPopulationIncreaseRate;
       this._lastPopulationIncreaseRate = popIncreaseRate;
     }
 
-    this._population = player.population();
-    this._maxPopulation = this.game.config().maxPopulation(player);
-    this._gold = player.gold();
-    this._troops = player.troops();
-    this._workers = player.workers();
+    this.population = player.population();
+    this.maxPopulation = this.game.config().maxPopulation(player);
+    this.troops = player.troops();
+    this.worker = player.workers();
     this.popRate = this.game.config().populationIncreaseRate(player) * 10;
-    this._goldPerSecond = this.game.config().goldAdditionRate(player) * 10;
 
-    this.currentTroopRatio = player.troops() / player.population();
     this.requestUpdate();
   }
 
@@ -147,13 +121,8 @@ export class ControlPanel extends LitElement implements Layer {
     return false;
   }
 
-  setVisibile(visible: boolean) {
-    this._isVisible = visible;
-    this.requestUpdate();
-  }
-
   targetTroops(): number {
-    return this._manpower * this.targetTroopRatio;
+    return this.manPower * this.targetTroopRatio;
   }
 
   onTroopChange(newRatio: number) {
@@ -161,22 +130,18 @@ export class ControlPanel extends LitElement implements Layer {
   }
 
   delta(): number {
-    const d = this._population - this.targetTroops();
-    return d;
+    return this.population - this.targetTroops();
   }
 
-  render() {
+  renderComponent() {
     return html`
-      <div
-        class="control-panel ${this._isVisible ? "" : "hidden"}"
-        @contextmenu=${(e) => e.preventDefault()}
-      >
+      <div class="control-panel" @contextmenu=${(e) => e.preventDefault()}>
         <div class="desktop-only">
           <div class="justify-between">
             <b><span class="icon">📈</span> Pop:</b>
             <span translate="no">
-              ${renderTroops(this._population)} /
-              ${renderTroops(this._maxPopulation)}
+              ${renderTroops(this.population)} /
+              ${renderTroops(this.maxPopulation)}
               <span
                 class="${this._popRateIsIncreasing
                   ? "isIncreasing"
@@ -191,16 +156,16 @@ export class ControlPanel extends LitElement implements Layer {
 
         <div>
           <label class="block" translate="no" for="troop-ratio">
-            Troops: <span translate="no">${renderTroops(this._troops)}</span> |
-            Workers: <span translate="no">${renderTroops(this._workers)}</span>
+            Troops: <span translate="no">${renderTroops(this.troops)}</span> |
+            Workers: <span translate="no">${renderTroops(this.worker)}</span>
           </label>
 
           <div class="with-value">
             <input
               id="troop-ratio"
               class="targetTroopRatio fill-${Math.round(
-                this.targetTroopRatio * 100,
-              )}"
+                (this.troops / this.population) * 100,
+              )} selector-${Math.round(this.targetTroopRatio * 100)}"
               type="range"
               min="1"
               max="100"
@@ -224,7 +189,9 @@ export class ControlPanel extends LitElement implements Layer {
           <div class="with-value">
             <input
               id="attack-ratio"
-              class="attackRatio fill-${Math.round(this.attackRatio * 100)}"
+              class="attackRatio fill-${Math.round(
+                this.attackRatio * 100,
+              )} selector-${Math.round(this.attackRatio * 100)}"
               type="range"
               min="1"
               max="100"

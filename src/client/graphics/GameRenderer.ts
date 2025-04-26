@@ -4,17 +4,16 @@ import { ClientID } from "../../core/Schemas";
 import { GameView } from "../../core/game/GameView";
 import { GameStartingModal } from "../GameStartingModal";
 import { RefreshGraphicsEvent as RedrawGraphicsEvent } from "../InputHandler";
+import { ControlPanel } from "../components/ui/ControlPanel";
 import { TransformHandler } from "./TransformHandler";
 import { UIState } from "./UIState";
 import { BuildMenu } from "./layers/BuildMenu";
-import { ControlPanel } from "./layers/ControlPanel";
 import { EmojiTable } from "./layers/EmojiTable";
 import { EventsDisplay } from "./layers/EventsDisplay";
 import { InGameHeader } from "./layers/InGameHeader";
 import { Layer } from "./layers/Layer";
 import { MultiTabModal } from "./layers/MultiTabModal";
 import { NameLayer } from "./layers/NameLayer";
-import { PlayerInfoOverlay } from "./layers/PlayerInfoOverlay";
 import { PlayerPanel } from "./layers/PlayerPanel";
 import { RadialMenu } from "./layers/RadialMenu";
 import { SpawnTimer } from "./layers/SpawnTimer";
@@ -66,6 +65,7 @@ export function createRenderer(
   inGameHeader.game = game;
   inGameHeader.clientID = clientID;
   inGameHeader.eventBus = eventBus;
+  inGameHeader.transform = transformHandler;
 
   const controlPanel = document.querySelector("control-panel") as ControlPanel;
   if (!(controlPanel instanceof ControlPanel)) {
@@ -85,17 +85,6 @@ export function createRenderer(
   eventsDisplay.eventBus = eventBus;
   eventsDisplay.game = game;
   eventsDisplay.clientID = clientID;
-
-  const playerInfo = document.querySelector(
-    "player-info-overlay",
-  ) as PlayerInfoOverlay;
-  if (!(playerInfo instanceof PlayerInfoOverlay)) {
-    consolex.error("player info overlay not found");
-  }
-  playerInfo.eventBus = eventBus;
-  playerInfo.clientID = clientID;
-  playerInfo.transform = transformHandler;
-  playerInfo.game = game;
 
   const winModel = document.querySelector("win-modal") as WinModal;
   if (!(winModel instanceof WinModal)) {
@@ -143,12 +132,11 @@ export function createRenderer(
       emojiTable as EmojiTable,
       buildMenu,
       uiState,
-      playerInfo,
       playerPanel,
+      inGameHeader,
     ),
     new SpawnTimer(game, transformHandler),
     controlPanel,
-    playerInfo,
     winModel,
     topBar,
     playerPanel,

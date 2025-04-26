@@ -29,8 +29,8 @@ import { TransformHandler } from "../TransformHandler";
 import { UIState } from "../UIState";
 import { BuildMenu } from "./BuildMenu";
 import { EmojiTable } from "./EmojiTable";
+import { InGameHeader } from "./InGameHeader";
 import { Layer } from "./Layer";
-import { PlayerInfoOverlay } from "./PlayerInfoOverlay";
 import { PlayerPanel } from "./PlayerPanel";
 
 enum Slot {
@@ -88,8 +88,8 @@ export class RadialMenu implements Layer {
     private emojiTable: EmojiTable,
     private buildMenu: BuildMenu,
     private uiState: UIState,
-    private playerInfoOverlay: PlayerInfoOverlay,
     private playerPanel: PlayerPanel,
+    private inGameHeader: InGameHeader,
   ) {}
 
   init() {
@@ -398,17 +398,17 @@ export class RadialMenu implements Layer {
     this.hideRadialMenu();
     this.emojiTable.hideTable();
     this.buildMenu.hideMenu();
-    this.playerInfoOverlay.hide();
+    this.inGameHeader.playerInfo.hide();
   }
 
   private showRadialMenu(x: number, y: number) {
     // Delay so center button isn't clicked immediately on press.
-    setTimeout(() => {
+    setTimeout(async () => {
       this.menuElement
         .style("left", `${x - this.menuSize / 2}px`)
         .style("top", `${y - this.menuSize / 2}px`)
         .style("display", "block");
-      this.playerInfoOverlay.maybeShow(x, y);
+      await this.inGameHeader.playerInfo.checkCursor(x, y);
       this.isVisible = true;
     }, 50);
   }
@@ -416,7 +416,7 @@ export class RadialMenu implements Layer {
   private hideRadialMenu() {
     this.menuElement.style("display", "none");
     this.isVisible = false;
-    this.playerInfoOverlay.hide();
+    this.inGameHeader.playerInfo.hide();
     this.lastClosed = new Date().getTime();
   }
 

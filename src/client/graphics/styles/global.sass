@@ -1,5 +1,6 @@
 @use "sass:color"
 @use "sass:math"
+@use "sass:map"
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap')
 
 $topbar-height: 3em
@@ -21,6 +22,12 @@ $thumb-border-width: 0.0625em
 
 $attackRatio: rgb(213, 47, 61)
 $targetTroopRatio: rgb(43, 104, 205)
+$background_hover: color.adjust($background, $lightness: -1.25%)
+$background_hover_hover: color.adjust($background_hover, $lightness: -1.25%)
+
+@function textColor($color)
+  $lightness: color.channel($color, "lightness", $space: hsl)
+  @return if($lightness > 50, #000000, #ffffff)
 
 *
   box-sizing: border-box
@@ -52,209 +59,19 @@ $targetTroopRatio: rgb(43, 104, 205)
   align-items: flex-start
   gap: $padding * 1.5
 
+  & > *
+    z-index: 1
+
   .spacer
     flex: 1
 
-.hidden
-  //display: none !important
-
-.hidden2
-  display: none !important
-
-.leaderboard
-  +withShadow
-  +card
-  font-size: 16px
-  // This is the default font size for the leaderboard -> update all em
-
-  max-width: 500px
-  max-height: 30vh
-  width: 400px
-
-  display: flex
-  flex-direction: column
-  gap: 0.5rem
-  overflow: hidden
-
-  h1
-    font-size: 1.25em
-    text-transform: uppercase
-    font-weight: normal
-    padding: 0
-    margin: 0
-    line-height: 1.25em
-
-  .actions
-    display: flex
-    gap: 0.25em
-
-    button
-      +defaultTransition
-      width: 100%
-      padding: 0.25em
-      background: color.adjust($background, $lightness: -2.5%)
-      border: none
-      color: $color
-      cursor: pointer
-      border-radius: 0.25em
-
-      &:hover
-        background: color.adjust($background, $lightness: -5%)
-        color: $color
-
-  .table-content
-    overflow: auto
-
-    &::-webkit-scrollbar
-      width: 0.5em
-      height: 0.5em
-
-    &::-webkit-scrollbar-track
-      background: transparent
-
-    &::-webkit-scrollbar-thumb
-      background: rgba(255, 255, 255, 0.2)
-      border-radius: 0.25em
-
-      &:hover
-        background: rgba(255, 255, 255, 0.4)
-
-    table
-      width: 100%
-      border-collapse: collapse
-
-      .player-name
-        max-width: 10ch
-        overflow: hidden
-        text-overflow: ellipsis
-        white-space: nowrap
-
-      th,
-      td
-        padding: 0
-        text-align: center
-        border: none
-        color: $color
-
-      th
-        font-size: 1.125em
-
-      .focused
-        font-weight: bold
-        font-size: 1.2em
-
-      tbody
-        tr
-          cursor: pointer
-          transition: background-color 0.2s
-
-          td
-            &:nth-child(1)
-              border-radius: 0.25em 0 0 0.25em
-
-            &:nth-child(5)
-              border-radius: 0 0.25em 0.25em 0
-
-          &:hover
-            background: rgba(255, 255, 255, 0.1)
-
-
-.leaderboard-button
-  +withShadow
-  +card
-  +defaultTransition
-  height: $topbar-height
-  cursor: pointer
-  font-weight: normal
-  margin: 0
-  line-height: 1em
-
-  &:hover
-    background: color.adjust($background, $lightness: -2.5%)
-    color: $color
-
-.desktop-only
-  @media (max-width: $desktop-max-width)
-    display: none !important
-
-.tablet-only
-  @media (max-width: $tablet-max-width)
-    display: none !important
-
-$background_hover: color.adjust($background, $lightness: -1.25%)
-
-.options
-  +card
-  +withShadow
-  font-weight: 300
-  height: $topbar-height
-  display: flex
-  flex-direction: row
-  gap: $padding
-  padding: $padding * 0.5
-
-  li
-    +defaultTransition
-    list-style: none
-    margin: 0
-    display: flex
-    justify-content: center
-    align-items: center
-    background: $background_hover
-    aspect-ratio: 1 / 1
-    border-radius: $padding
-    cursor: pointer
-
-    &.timer
-      aspect-ratio: 2 / 1
-
-    &:hover
-      background: color.adjust($background_hover, $lightness: -2.5%)
-
-.dropdown-menu
-  +card
-  +withShadow
-  position: absolute
-
-
-.informative-bar
-  @include card
-  @include withShadow
-  display: flex
-  flex-direction: row
-  gap: $padding
-  font-family: $robotoMono
-  font-weight: 300
-  height: $topbar-height
-
-  $width: 6.5em
-
-  li
-    font-size: 0.85em
-    list-style: none
-    margin: 0
-    color: white
+  .right-side
+    z-index: $frontZIndex
     position: relative
-    border-right: 1px solid white
-    padding: math.div($padding, 2) $padding*2 math.div($padding, 2) math.div($padding, 2)
-    width: $width
     display: flex
-    justify-content: space-between
-    align-items: center
-
-    .icon
-      width: 1.75em
-      aspect-ratio: 1 / 1
-      display: inline-flex
-      align-items: center
-      justify-content: center
-
-    &:first-child
-      width: $width * 2
-
-    &:last-child
-      border: none
-
+    flex-direction: column
+    gap: $padding * 1.5
+    align-items: flex-end
 
 .control-panel
   @include card
@@ -343,7 +160,7 @@ $background_hover: color.adjust($background, $lightness: -1.25%)
       &.fill-#{$i}
         &::before
           width: calc(#{$i} * 1%)
-
+      &.selector-#{$i}
         &::after
           left: calc(#{$i} * 1% - #{calc($thumb-size / 2)})
 
@@ -379,3 +196,40 @@ $background_hover: color.adjust($background, $lightness: -1.25%)
       height: $track-height
       background: $track-color
       border-radius: calc($track-height / 2)
+
+// utilities
+
+
+.desktop-only
+  @media (max-width: $desktop-max-width)
+    display: none !important
+
+.tablet-only
+  @media (max-width: $tablet-max-width)
+    display: none !important
+
+span.icon
+  display: inline-flex
+  align-items: center
+  justify-content: center
+
+div.icon
+  display: flex
+  align-items: center
+  justify-content: center
+
+.number
+  font-family: $robotoMono
+
+$labels: ("human":#A9232E, "bot":#3063B5, "fakehuman":#9b19c5, "friendly":#21B521, "hostile":#D12E2E, "neutral":#44444B, "distrustful":#EDB640)
+
+.label
+  padding: $padding * 0.25 $padding * 1.25 !important
+  background: white
+  text-align: center !important
+  border-radius: $padding * 0.5
+
+  @each $name, $color in $labels
+    &-#{$name}
+      background: $color
+      color: textColor($color)

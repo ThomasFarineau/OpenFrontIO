@@ -176,5 +176,89 @@
   },
   "select_lang": {
     "title": "Sélectionner une langue"
+  },
+  "leaderboard": {
+    "title": "Classement",
+    "rank": "Rang",
+    "player": "Joueur",
+    "owned": "Terrain",
+    "gold": "Or",
+    "troops": "Troupes",
+    "showTop": "Afficher le top {num}",
+    "showAll": "Afficher tout",
+    "open": "Ouvrir le classement",
+    "close": "Masquer"
+  },
+  "infobar": {
+    "gold": "Votre or et le montant d'or que vous gagnez par seconde",
+    "city": "Le nombre de villes que vous avez construites",
+    "port": "Le nombre de ports que vous avez construits",
+    "missilesilo": "Le nombre de silos à missiles que vous avez construits",
+    "samlauncher": "Le nombre de lanceurs SAM que vous avez construits",
+    "defensepost": "Le nombre de postes de défense que vous avez construits",
+    "warship": "Le nombre de navires de guerre que vous avez construits"
+  },
+  "options": {
+    "pause": "Mettre en pause",
+    "resume": "Reprendre",
+    "quit": "Quitter la partie",
+    "quit_confirm": "Êtes-vous sûr de vouloir quitter la partie ?",
+    "settings": "Paramètres",
+    "toggle_terrain": "Afficher les territoires",
+    "toggle_emojis": "Afficher les émojis",
+    "toggle_dark_mode": "Mode sombre",
+    "toggle_attack": {
+      "title": "Clic gauche",
+      "menu": "Ouvre le menu",
+      "attack": "Attaque"
+    },
+    "toggle_focus": {
+      "title": "Lock Focus",
+      "locked": "Focus locked",
+      "hover": "Hover focus"
+    },
+    "on": "Activé",
+    "off": "Désactivé"
+  },
+  "player_info": {
+    "type": {
+      "title": "Type",
+      "human": "Joueur",
+      "bot": "Bot",
+      "fakehuman": "Nation"
+    },
+    "defending_troops": "Troupes en défense",
+    "attacking_troops": "Troupes en attaque",
+    "gold": "Or",
+    "cities": "Villes",
+    "ports": "Ports",
+    "missileSilos": "Silos à missiles",
+    "samLaunchers": "Lanceurs SAM",
+    "relation": "Relation",
+    "health": "Santé",
+    "unit": "Type"
+  },
+  "unit": {
+    "transportship": "Navire de transport",
+    "warship": "Navire de guerre",
+    "shell": "Coquille",
+    "sammissile": "Missile SAM",
+    "port": "Port",
+    "atombomb": "Bombe atomique",
+    "hydrogenbomb": "Bombe à hydrogène",
+    "tradeship": "Navire de commerce",
+    "missilesilo": "Silo à missiles",
+    "defensepost": "Poste de défense",
+    "samlauncher": "Lanceur SAM",
+    "city": "Ville",
+    "mirv": "MIRV",
+    "mirvwarhead": "Ogive MIRV",
+    "construction": "Construction"
+  },
+  "relation": {
+    "hostile": "Ennemi",
+    "distrustful": "Méfiant",
+    "neutral": "Neutre",
+    "friendly": "Ami"
   }
 }
