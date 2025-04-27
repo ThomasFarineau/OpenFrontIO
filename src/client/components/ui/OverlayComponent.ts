@@ -22,4 +22,8 @@ export default abstract class OverlayComponent extends LitElement {
     if (!this.isVisible) return null;
     return this.renderComponent();
   }
+
+  shouldTransform(): boolean {
+    return false;
+  }
 }

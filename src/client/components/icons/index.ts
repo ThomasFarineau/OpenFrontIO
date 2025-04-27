@@ -13,6 +13,7 @@ import settingsIcon from "../../components/icons/Settings";
 
 import healthIcon from "../../components/icons/Health";
 
+import populationIcon from "./Population";
 import sortAscendingIcon from "./SortAscending";
 import sortDescendingIcon from "./SortDescending";
 import unsortedIcon from "./Unsorted";
@@ -25,6 +26,7 @@ export {
   healthIcon,
   missileSiloIcon,
   pauseIcon,
+  populationIcon,
   portIcon,
   resumeIcon,
   samLauncherIcon,

@@ -3,14 +3,18 @@
 .leaderboard
   +withShadow
   +card
-  max-width: 32em
-  max-height: 30vh
-  width: 25em
+  &
+    max-width: 32em
+    max-height: 30vh
+    width: 25em
+    display: flex
+    flex-direction: column
+    gap: $padding
+    overflow: hidden
 
-  display: flex
-  flex-direction: column
-  gap: $padding
-  overflow: hidden
+  @media (max-width: $sm-width)
+    width: 100%
+    max-width: none
 
   h1
     font-size: 1.25em
@@ -26,13 +30,14 @@
 
     button
       +defaultTransition
-      width: 100%
-      padding: 0.25em
-      background: $background_hover
-      border: none
-      color: $color
-      cursor: pointer
-      border-radius: 0.25em
+      &
+        width: 100%
+        padding: $padding * 0.5
+        background: $background_hover
+        border: none
+        color: $color
+        cursor: pointer
+        border-radius: $padding * 0.5
 
       &:hover
         background: $background_hover_hover
@@ -109,11 +114,12 @@
   +withShadow
   +card
   +defaultTransition
-  height: $topbar-height
-  cursor: pointer
-  font-weight: normal
-  margin: 0
-  line-height: 1em
+  &
+    height: $topbar-height
+    cursor: pointer
+    font-weight: normal
+    margin: 0
+    line-height: 1em
 
   &:hover
     background: $background_hover

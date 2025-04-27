@@ -260,5 +260,11 @@
     "distrustful": "Méfiant",
     "neutral": "Neutre",
     "friendly": "Ami"
+  },
+  "panel": {
+    "population": "Pop",
+    "troops": "Troupes",
+    "workers": "Travailleurs",
+    "troops_ready": "Troupes prêtes"
   }
 }

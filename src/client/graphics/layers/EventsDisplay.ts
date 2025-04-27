@@ -31,7 +31,7 @@ import { Layer } from "./Layer";
 import { GameView, PlayerView, UnitView } from "../../../core/game/GameView";
 import { onlyImages } from "../../../core/Util";
 import { renderTroops } from "../../Utils";
-import { GoToPlayerEvent, GoToUnitEvent } from "./InGameHeader";
+import { GoToPlayerEvent, GoToUnitEvent } from "./GameOverlay";
 
 interface Event {
   description: string;

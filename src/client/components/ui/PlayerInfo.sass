@@ -1,12 +1,13 @@
 @use "../../graphics/styles/global" as *
 
 .player-info
-  +card
   +withShadow
-  margin: 0
-  display: flex
-  flex-direction: column
-  gap: $padding * 0.5
+  +card
+  &
+    margin: 0
+    display: flex
+    flex-direction: column
+    gap: $padding * 0.5
 
   li
     list-style: none

@@ -1,0 +1,62 @@
+@use "../styles/global" as *
+
+.game-overlay
+  position: fixed
+  top: $padding
+  right: $padding
+  left: $padding
+  bottom: $padding
+
+  display: grid
+  grid-template-columns: auto auto 1fr auto
+  grid-template-rows: auto auto 1fr 1fr auto
+  grid-template-areas: "leaderboard infobar . options" "leaderboard . . playerinfo" ". . . ." ". . . ." "panel panel . ."
+  grid-gap: $padding * 1.5
+
+  pointer-events: none
+
+  @media (max-width: $lg-width)
+    grid-template-areas: "infobar infobar . options" "leaderboard . . playerinfo" ". . . ." ". . . ." "panel panel . ."
+
+  @media (max-width: $md-width)
+    top: 0
+    right: 0
+    left: 0
+    bottom: 0
+    font-size: 0.9em
+    grid-template-areas: "infobar infobar infobar infobar" "leaderboard . . options" "leaderboard . . playerinfo" ". . . ." "panel panel panel panel"
+
+  @media (max-width: $sm-width)
+    font-size: 0.8em
+    grid-gap: $md-padding
+    grid-template-areas: "infobar infobar infobar options" "leaderboard leaderboard leaderboard playerinfo" ". . . ." ". . . ." "panel panel panel panel"
+
+
+  leaderboard-component
+    grid-area: leaderboard
+    @media (max-width: $md-width)
+      padding: $md-padding
+    @media (max-width: $sm-width)
+      text-align: center
+
+  infobar-component
+    grid-area: infobar
+
+  options-component
+    grid-area: options
+    @media (max-width: $md-width)
+      padding: $md-padding
+    @media (max-width: $sm-width)
+      padding: 0
+
+  playerinfo-component
+    grid-area: playerinfo
+    @media (max-width: $md-width)
+      padding: $md-padding
+
+  panel-component
+    grid-area: panel
+
+  & > *
+    z-index: 3
+    pointer-events: all

@@ -4,13 +4,12 @@ import { ClientID } from "../../core/Schemas";
 import { GameView } from "../../core/game/GameView";
 import { GameStartingModal } from "../GameStartingModal";
 import { RefreshGraphicsEvent as RedrawGraphicsEvent } from "../InputHandler";
-import { ControlPanel } from "../components/ui/ControlPanel";
 import { TransformHandler } from "./TransformHandler";
 import { UIState } from "./UIState";
 import { BuildMenu } from "./layers/BuildMenu";
 import { EmojiTable } from "./layers/EmojiTable";
 import { EventsDisplay } from "./layers/EventsDisplay";
-import { InGameHeader } from "./layers/InGameHeader";
+import { GameOverlay } from "./layers/GameOverlay";
 import { Layer } from "./layers/Layer";
 import { MultiTabModal } from "./layers/MultiTabModal";
 import { NameLayer } from "./layers/NameLayer";
@@ -20,7 +19,6 @@ import { SpawnTimer } from "./layers/SpawnTimer";
 import { StructureLayer } from "./layers/StructureLayer";
 import { TerrainLayer } from "./layers/TerrainLayer";
 import { TerritoryLayer } from "./layers/TerritoryLayer";
-import { TopBar } from "./layers/TopBar";
 import { UILayer } from "./layers/UILayer";
 import { UnitLayer } from "./layers/UnitLayer";
 import { WinModal } from "./layers/WinModal";
@@ -58,23 +56,15 @@ export function createRenderer(
   buildMenu.game = game;
   buildMenu.eventBus = eventBus;
 
-  const inGameHeader = document.querySelector("in-game-header") as InGameHeader;
-  if (!(inGameHeader instanceof InGameHeader)) {
-    consolex.error("InGameHeader element not found in the DOM");
+  const gameOverlay = document.querySelector("game-overlay") as GameOverlay;
+  if (!(gameOverlay instanceof GameOverlay)) {
+    consolex.error("game-overlay element not found in the DOM");
   }
-  inGameHeader.game = game;
-  inGameHeader.clientID = clientID;
-  inGameHeader.eventBus = eventBus;
-  inGameHeader.transform = transformHandler;
-
-  const controlPanel = document.querySelector("control-panel") as ControlPanel;
-  if (!(controlPanel instanceof ControlPanel)) {
-    consolex.error("ControlPanel element not found in the DOM");
-  }
-  controlPanel.clientID = clientID;
-  controlPanel.eventBus = eventBus;
-  controlPanel.uiState = uiState;
-  controlPanel.game = game;
+  gameOverlay.game = game;
+  gameOverlay.clientID = clientID;
+  gameOverlay.eventBus = eventBus;
+  gameOverlay.transform = transformHandler;
+  gameOverlay.uiState = uiState;
 
   const eventsDisplay = document.querySelector(
     "events-display",
@@ -92,12 +82,6 @@ export function createRenderer(
   }
   winModel.eventBus = eventBus;
   winModel.game = game;
-
-  const topBar = document.querySelector("top-bar") as TopBar;
-  if (!(topBar instanceof TopBar)) {
-    console.error("top bar not found");
-  }
-  topBar.game = game;
 
   const playerPanel = document.querySelector("player-panel") as PlayerPanel;
   if (!(playerPanel instanceof PlayerPanel)) {
@@ -133,15 +117,13 @@ export function createRenderer(
       buildMenu,
       uiState,
       playerPanel,
-      inGameHeader,
+      gameOverlay,
     ),
     new SpawnTimer(game, transformHandler),
-    controlPanel,
     winModel,
-    topBar,
     playerPanel,
     multiTabModal,
-    inGameHeader,
+    gameOverlay,
   ];
 
   return new GameRenderer(

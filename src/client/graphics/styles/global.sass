@@ -9,10 +9,14 @@ $robotoMono: 'Roboto Mono', monospace
 $background: rgba(31, 41, 55, 0.7)
 $color: white
 $frontZIndex: 9999
-$padding: 0.5em
 
-$desktop-max-width: 1023px
-$tablet-max-width: 639px
+$padding: 0.5em
+$md-padding: 0.25em
+
+$lg-width: 1460px
+$md-width: 1024px
+$sm-width: 800px
+
 
 $track-color: $background
 $thumb-bg: white
@@ -33,179 +37,44 @@ $background_hover_hover: color.adjust($background_hover, $lightness: -1.25%)
   box-sizing: border-box
 
 =card
-  background-color: $background
-  color: $color
-  border: none
-  border-radius: $padding * 1.5
-  padding: $padding
-  margin: 0
-  font-size: 1em
-  backdrop-filter: blur(5px)
-  z-index: $frontZIndex
+  &
+    background-color: $background
+    color: textColor($background)
+    border: none
+    border-radius: $padding * 1.5
+    padding: $padding
+    margin: 0
+    font-size: 1em
+    backdrop-filter: blur(5px)
+    z-index: $frontZIndex
+
+    @media (max-width: $md-width)
+      padding: $md-padding
+      font-size: 0.9em
+      border-radius: $md-padding
 
 =withShadow
-  box-shadow: 0 0 1em color.adjust($background, $lightness: -25%, $alpha: -0.25)
+  &
+    box-shadow: 0 0 1em color.adjust($background, $lightness: -25%, $alpha: -0.25)
+    @media(max-width: $md-width)
+      box-shadow: none
 
 =defaultTransition
-  transition: all 0.15s ease-in-out
-
-.inGameHeader
-  position: absolute
-  top: $padding
-  right: $padding
-  left: $padding
-  display: flex
-  flex-direction: row
-  align-items: flex-start
-  gap: $padding * 1.5
-
-  & > *
-    z-index: 1
-
-  .spacer
-    flex: 1
-
-  .right-side
-    z-index: $frontZIndex
-    position: relative
-    display: flex
-    flex-direction: column
-    gap: $padding * 1.5
-    align-items: flex-end
-
-.control-panel
-  @include card
-  @include withShadow
-  position: fixed
-  bottom: $padding
-  left: $padding
-  z-index: $frontZIndex
-  display: flex
-  flex-direction: column
-  gap: 0.5rem
-  width: 20em
-  max-width: 400px
-  box-sizing: border-box
-
-
-  @media(max-width: $desktop-max-width)
-    position: relative
-    width: 100%
-    max-width: 100%
-    border-radius: 0
-    left: 0
-    bottom: 0
-    display: flex
-    flex-direction: row
-    gap: 2em
-    box-shadow: none
-    & > div
-      flex: 1
-
-  @media(max-width: $tablet-max-width)
-    flex-direction: column
-    gap: 0.5em
-
-  b
-    .icon
-      width: 1.25em
-      aspect-ratio: 1 / 1
-      display: inline-block
-      text-align: center
-
-
-  .isIncreasing
-    color: #3fda3f
-
-  .isNotIncreasing
-    color: orange
-
-  .justify-between
-    display: flex
-    justify-content: space-between
-    align-items: center
-
-  .with-value
-    display: flex
-    justify-content: space-between
-    align-items: center
-    gap: 0.5em
-
-    span
-      font-size: 0.9em
-      font-weight: normal
-
-  input[type="range"]
-    position: relative
-    -webkit-appearance: none
-    -moz-appearance: none
-    appearance: none
-    width: 100%
-    height: $track-height
-    background: $track-color
-    border: none
-    border-radius: calc($track-height / 2)
-    outline: none
-    margin: 0
-
-    &.attackRatio
-      &::before, &::after
-        background: $attackRatio
-
-    &.targetTroopRatio
-      &::before, &::after
-        background: $targetTroopRatio
-
-    @for $i from 0 through 100
-      &.fill-#{$i}
-        &::before
-          width: calc(#{$i} * 1%)
-      &.selector-#{$i}
-        &::after
-          left: calc(#{$i} * 1% - #{calc($thumb-size / 2)})
-
-    &::before, &::after
-      content: ""
-      position: absolute
-      top: 50%
-      transform: translateY(-50%)
-
-    &::before
-      left: 0
-      height: calc($track-height + 1px)
-      border-radius: calc($track-height / 2)
-      pointer-events: none
-      z-index: 1
-
-    &::after
-      aspect-ratio: 1 / 2
-      height: $thumb-size
-      left: 0
-      z-index: 2
-      border-radius: 0.25em
-      cursor: grab
-
-    &::-webkit-slider-thumb
-      -webkit-appearance: none
-      appearance: none
-      aspect-ratio: 1 / 2
-      height: $thumb-size
-      cursor: grab
-
-    &::-webkit-slider-runnable-track
-      height: $track-height
-      background: $track-color
-      border-radius: calc($track-height / 2)
+  &
+    transition: all 0.15s ease-in-out
 
 // utilities
 
-
-.desktop-only
-  @media (max-width: $desktop-max-width)
+.lg-hide
+  @media (min-width: $md-width + 1)
     display: none !important
 
-.tablet-only
-  @media (max-width: $tablet-max-width)
+.md-hide
+  @media (max-width: $md-width)
+    display: none !important
+
+.sm-hide
+  @media (max-width: $sm-width)
     display: none !important
 
 span.icon
@@ -226,6 +95,7 @@ $labels: ("human":#A9232E, "bot":#3063B5, "fakehuman":#9b19c5, "friendly":#21B52
 .label
   padding: $padding * 0.25 $padding * 1.25 !important
   background: white
+  color: textColor(white)
   text-align: center !important
   border-radius: $padding * 0.5
 

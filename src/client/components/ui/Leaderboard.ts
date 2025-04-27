@@ -4,7 +4,7 @@ import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { EventBus } from "../../../core/EventBus";
 import { GameView, PlayerView } from "../../../core/game/GameView";
 import { ClientID } from "../../../core/Schemas";
-import { GoToPlayerEvent } from "../../graphics/layers/InGameHeader";
+import { GoToPlayerEvent } from "../../graphics/layers/GameOverlay";
 import { renderNumber, renderPercentage, translateText } from "../../Utils";
 import { sortAscendingIcon, sortDescendingIcon, unsortedIcon } from "../icons";
 import styles from "./Leaderboard.sass";

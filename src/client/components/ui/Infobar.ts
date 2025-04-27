@@ -8,6 +8,7 @@ import {
   defensePostIcon,
   goldIcon,
   missileSiloIcon,
+  populationIcon,
   portIcon,
   samLauncherIcon,
   warshipIcon,
@@ -30,8 +31,10 @@ export default class Infobar extends OverlayComponent {
   @property({ type: Object }) game!: GameView;
 
   @state() private playerGold = "0";
-
   @state() private goldPerSecond = 0;
+  @state() private population = "0";
+  @state() private maxPopulation = "0";
+  @state() private populationPerSeconds = 0;
 
   @state() private entries: InfoEntry[] = [
     { type: UnitType.City, icon: cityIcon(), value: "0" },
@@ -89,9 +92,24 @@ export default class Infobar extends OverlayComponent {
 
   renderComponent = (): TemplateResult | null => html`
     <ul class="infobar">
-      ${this.renderGold()} ${this.entries.map((e) => this.renderEntry(e))}
+      ${this.renderPopulation()} ${this.renderGold()}
+      ${this.entries.map((e) => this.renderEntry(e))}
     </ul>
   `;
+
+  private renderPopulation(): TemplateResult {
+    return html`
+      <li class="lg-hide" title="${translateText("infobar.population")}">
+        <span class="icon">${populationIcon()}</span>
+        <span class="value number">
+          ${this.population} / ${this.maxPopulation}
+          <span class="subvalue"
+            >(+ ${renderNumber(this.populationPerSeconds)})</span
+          >
+        </span>
+      </li>
+    `;
+  }
 
   private renderGold(): TemplateResult {
     return html`
@@ -111,7 +129,7 @@ export default class Infobar extends OverlayComponent {
         Object.values(UnitType).indexOf(entry.type)
       ].toLowerCase();
     return html`
-      <li title="${translateText(`infobar.${key}`)}">
+      <li class="sm-hide" title="${translateText(`infobar.${key}`)}">
         <span class="icon">${entry.icon}</span>
         <span class="value number">${entry.value}</span>
       </li>

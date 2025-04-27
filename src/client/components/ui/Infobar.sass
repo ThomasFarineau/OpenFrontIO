@@ -3,13 +3,17 @@
 $width: 6.5em
 
 .infobar
-  @include card
-  @include withShadow
-  display: flex
-  flex-direction: row
-  gap: $padding
-  font-weight: 300
-  height: $topbar-height
+  +withShadow
+  +card
+  &
+    display: flex
+    flex-direction: row
+    gap: $padding
+    font-weight: 300
+    height: $topbar-height
+
+  @media (max-width: $md-width)
+    border-radius: 0
 
   li
     font-size: 0.85em
@@ -23,6 +27,7 @@ $width: 6.5em
     display: flex
     justify-content: space-between
     align-items: center
+    flex: 1
 
     .icon
       width: 1.75em
@@ -31,8 +36,9 @@ $width: 6.5em
       align-items: center
       justify-content: center
 
-    &:first-child
+    &:nth-child(1), &:nth-child(2)
       width: $width * 2
+      flex: 2
 
     &:last-child
       border: none

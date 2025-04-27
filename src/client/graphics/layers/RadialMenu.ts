@@ -29,7 +29,7 @@ import { TransformHandler } from "../TransformHandler";
 import { UIState } from "../UIState";
 import { BuildMenu } from "./BuildMenu";
 import { EmojiTable } from "./EmojiTable";
-import { InGameHeader } from "./InGameHeader";
+import { GameOverlay } from "./GameOverlay";
 import { Layer } from "./Layer";
 import { PlayerPanel } from "./PlayerPanel";
 
@@ -89,7 +89,7 @@ export class RadialMenu implements Layer {
     private buildMenu: BuildMenu,
     private uiState: UIState,
     private playerPanel: PlayerPanel,
-    private inGameHeader: InGameHeader,
+    private inGameHeader: GameOverlay,
   ) {}
 
   init() {
